@@ -8,6 +8,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <benchmark/>
+    <jmh.benchmarkPattern>${benchmark}.*</jmh.benchmarkPattern>
+    <jmh.rff>target/${benchmark}.json</jmh.rff>
   </properties>
 
   <dependencies>
@@ -68,11 +71,53 @@
           <configuration>
             <source>11</source>
             <target>11</target>
+            <annotationProcessorPaths>
+              <path>
+                <groupId>org.openjdk.jmh</groupId>
+                <artifactId>jmh-generator-annprocess</artifactId>
+                <version>${jmh.version}</version>
+              </path>
+            </annotationProcessorPaths>
           </configuration>
         </plugin>
 
       </plugins>
     </pluginManagement>
+
+    <plugins>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>jmh</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>java</executable>
+              <classpathScope>test</classpathScope>
+              <arguments>
+                <argument>-classpath</argument>
+                <classpath/>
+                <argument>org.openjdk.jmh.Main</argument>
+                <argument>-foe</argument>
+                <argument>true</argument>
+                <argument>-gc</argument>
+                <argument>true</argument>
+                <argument>-rf</argument>
+                <argument>json</argument>
+                <argument>-rff</argument>
+                <argument>${jmh.rff}</argument>
+                <argument>${jmh.benchmarkPattern}</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
 
   </build>
 
